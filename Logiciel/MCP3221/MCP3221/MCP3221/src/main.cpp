@@ -63,3 +63,4 @@ void loop() {
   double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie); // mesurer et afficher les valeurs des canaux
   delay(1000); //1 seconde avant la prochaine mesure
 }
+
