@@ -1,3 +1,5 @@
+//Brief: code fonctionnement MCP3221
+
 #include <Arduino.h>
 #include <Wire.h> // pour communication I2C
 #include "MCP3X21.h"
