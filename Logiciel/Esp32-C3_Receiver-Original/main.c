@@ -1,3 +1,6 @@
+//Brief: code receive langage: ESPIDF, session automne 
+
+
 #include "driver/gpio.h"
 #include "driver/twai.h"
 #include "freertos/FreeRTOS.h"
