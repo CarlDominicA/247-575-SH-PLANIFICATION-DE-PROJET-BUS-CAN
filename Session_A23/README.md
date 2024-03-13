@@ -1,4 +1,11 @@
-**Ce projet est basé sur le esp32-C3 sur un workspace platformIO IDE pour Visual Studio Code**
+**Regroupe les travaux fait pendant la session d'hivers de 2024**
 
+# Logiciel :
+**contient tous les éléments logiciels/programmations de ce projet**
+-envoie de trame CAN
+-réception de trame CAN
+-apperçu de la construction d'une trame
 
-![ImageStaticAffiche_CapteurCAN](https://github.com/CarlDominicA/Projet_Module_CAN/assets/97920084/0c7b7774-fba3-4f5c-ab59-0fe8e7419acd)
+# Matériel : 
+**contient tous les éléments physique de ce projet.**
+-Prototype
