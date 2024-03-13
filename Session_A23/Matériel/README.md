@@ -1,1 +1,11 @@
-![images](https://github.com/CarlDominicA/Projet_Module_CAN/assets/97920084/37123049-4498-4f9b-8b1f-e3fffefe67b4)
+## Listes de pièces à la conception du prototype
+
+##### Breadbord/plaque de développement
+##### ESP32-C3-Devkit
+##### Potentiomètre (simuler un capteur 0-5v)
+##### TJA1051T
+
+## module intérégré dans le devkit (esp32)
+
+##### module adc (conversion analogique à numérique)
+##### module twai (conversion vers un signal CAN)
