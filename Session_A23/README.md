@@ -1,4 +1,4 @@
-**Regroupe les travaux fait pendant la session d'hivers de 2024**
+**Regroupe les travaux fait pendant la session d'automne de 2023**
 
 # Logiciel :
 **contient tous les éléments logiciels/programmations de ce projet**
