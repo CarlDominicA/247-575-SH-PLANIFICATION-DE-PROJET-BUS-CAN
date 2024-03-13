@@ -1,0 +1,18 @@
+.BLM18KG121TZ1D :1 ;BLM18_Z1D Series EMI Suppression Filter 120+/-25% at 100MHz 3A @85
+BLM18EG101TH1D
+*STM FB
+*NGS
+*PLB 1="1" 2="2"
+*MXP 2
+*DFN BLM18KG121TZ1D
+~!Manufacturer_Name (Murata Electronics)
+~!Manufacturer_Part_Number (BLM18KG121TZ1D)
+~!Mouser Part Number (81-BLM18KG121TZ1D)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Murata-Electronics/BLM18KG121TZ1D?qs=lEfY3O89Aqmt%252B40wz%2FCO1A%3D%3D)
+~!Arrow Part Number (BLM18KG121TZ1D)
+~!Link Arrow Price/Stock (https://www.arrow.com/en/products/blm18kg121tz1d/murata-manufacturing?region=nac)
+~!Link Datasheet (http://www.murata.com/~/media/webrenewal/support/library/catalog/products/emc/emifil/c31e.ashx?la=en-gb)
+~!Height (0.75mm)
+~!3D_Model (BLM18KG121TZ1D)
+BLM18KG121TZ1D
+1.1!U 2.1!U 

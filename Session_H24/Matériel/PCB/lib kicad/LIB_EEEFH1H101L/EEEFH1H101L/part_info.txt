@@ -1,0 +1,9 @@
+Manufacturer=Panasonic
+PartNumber=EEEFH1H101L
+PartCategory=Capacitor Polarised
+PackageCategory=Other
+PinCount=2
+Version=4.2
+Released=2021-09-30 12:13:09
+Downloaded=2024-02-16 19:57:55
+3D=Y

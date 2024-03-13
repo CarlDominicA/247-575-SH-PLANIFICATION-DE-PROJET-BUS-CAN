@@ -1,0 +1,170 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "ATM13-3P-BM04"
+   (description "Automotive Connectors RA Flng Mnt PCB Rcpt 3POS Gry Tin Cont")
+   (family "CON")
+   (package "ATM133PBM04")
+   (attribute "Datasheet Link" "https://www.amphenol-sine.com/pdf/datasheet/ATM13-3P-BM04.pdf")
+   (attribute "Geometry.Height" "28.8mm")
+   (attribute "Manufacturer_Name" "Amphenol")
+   (attribute "Manufacturer_Part_Number" "ATM13-3P-BM04")
+   (attribute "Mouser Part Number" "654-ATM13-3P-BM04")
+   (attribute "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Amphenol-SINE-Systems/ATM13-3P-BM04?qs=0lSvoLzn4L%252BKLNuF8dKdNw%3D%3D")
+   (attribute "Arrow Part Number" "ATM13-3P-BM04")
+   (attribute "Arrow Price/Stock" "https://www.arrow.com/en/products/atm13-3p-bm04/amphenol-sine-systems?region=nac")
+   (gate
+    (symbol "ATM13-3P-BM04")
+    (pin "1" 1 PS)
+    (pin "2" 2 PS)
+    (pin "3" 3 PS)
+    (pin "MH1" MH1 PS)
+    (pin "MH2" MH2 PS)
+    (pin "MH3" MH3 PS)
+   )
+  )
+  (symbol "ATM13-3P-BM04"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 100) (pt 700 100) (pt 700 -300) (pt 200 -300) (pt 200 100) (closed))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -100) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -200) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 900 0) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 900 -100) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 900 -200) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "ATM133PBM04"
+   (units MM)
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -16.3 -16.5)
+      (pt 24.7 -16.5)
+      (pt 24.7 10.3)
+      (pt -16.3 10.3)
+      (pt -16.3 -16.5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed true)
+      (pt -16.3 -16.5)
+      (pt 24.7 -16.5)
+      (pt 24.7 10.3)
+      (pt -16.3 10.3)
+      (pt -16.3 -16.5))))
+   (layer OCCA
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -17.3 -30.4)
+      (pt 25.7 -30.4)
+      (pt 25.7 11.3)
+      (pt -17.3 11.3)
+      (pt -17.3 -30.4))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt -6.25 -16.5)
+      (pt -6.25 -29.4)
+      (pt 14.65 -29.4)
+      (pt 14.65 -16.5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt -6.25 -16.5)
+      (pt -6.25 -29.4)
+      (pt 14.65 -29.4)
+      (pt 14.65 -16.5))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt -17 0)
+      (arc (pt -17.000 0.000) (pt -17.000 0.050) (pt -16.900 -0.050) (start 180.0) (sweep 180.0))
+      (pt -16.9 0)
+      (arc (pt -16.900 0.000) (pt -17.000 0.050) (pt -16.900 -0.050) (start 180.0) (sweep -.0))
+      (pt -17 0)
+      (arc (pt -17.000 0.000) (pt -17.000 0.050) (pt -16.900 -0.050) (start 180.0) (sweep 180.0))
+      (pt -16.9 0))))
+   (leg 1 (pt 0.000 0.000) (padstack 0))
+   (leg 2 (pt 4.200 0.000) (padstack 0))
+   (leg 3 (pt 8.400 0.000) (padstack 0))
+   (leg MH1 (pt -6.910 6.350) (padstack 4))
+   (leg MH2 (pt 15.310 6.350) (padstack 5))
+   (leg MH3 (pt 4.200 -6.000) (padstack 6))
+   (padstack 0
+    (hole 1.2)
+    (plated true)
+    (pad (layer TCOP) (round 1.800))
+    (pad (layer INNER) (round 1.800))
+    (pad (layer BCOP) (round 1.800))
+   )
+   (padstack 4
+    (hole 3.43)
+    (plated true)
+    (pad (layer TCOP) (round 5.145))
+    (pad (layer INNER) (round 5.145))
+    (pad (layer BCOP) (round 5.145))
+   )
+   (padstack 5
+    (hole 3.43)
+    (plated true)
+    (pad (layer TCOP) (round 5.145))
+    (pad (layer INNER) (round 5.145))
+    (pad (layer BCOP) (round 5.145))
+   )
+   (padstack 6
+    (hole 3.43)
+    (plated true)
+    (pad (layer TCOP) (round 5.145))
+    (pad (layer INNER) (round 5.145))
+    (pad (layer BCOP) (round 5.145))
+   )
+  )
+ )
+)

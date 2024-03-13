@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART '1N5819HWQ_7_F'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "ARROW_PART_NUMBER", "ARROW_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Diodes Incorporated", "1N5819HWQ-7-F" (!) = "", "SOD3716X145N", "Small Outline Diode", "621-1N5819HWQ-7-F", "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HWQ-7-F?qs=gZXFycFWdAPDr8BmsK1ygg%3D%3D", "1N5819HWQ-7-F", "https://www.arrow.com/en/products/1n5819hwq-7-f/diodes-incorporated?region=asia", "Schottky Diodes & Rectifiers Schottky Rectifier", "https://eu.mouser.com/datasheet/2/115/ds30217-1532212.pdf", "1.45 mm"
+END_PART
+
+END.

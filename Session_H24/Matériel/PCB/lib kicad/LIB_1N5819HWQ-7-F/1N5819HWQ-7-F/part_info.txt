@@ -1,0 +1,9 @@
+Manufacturer=Diodes Incorporated
+PartNumber=1N5819HWQ-7-F
+PartCategory=Schottky Diode
+PackageCategory=Small Outline Diode
+PinCount=2
+Version=1.1
+Released=2020-10-24 06:36:19
+Downloaded=2024-02-16 20:20:35
+3D=Y

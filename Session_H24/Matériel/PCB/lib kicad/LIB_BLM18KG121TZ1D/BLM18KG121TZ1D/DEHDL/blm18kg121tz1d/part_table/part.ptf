@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'BLM18KG121TZ1D'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "ARROW_PART_NUMBER", "ARROW_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Murata Electronics", "BLM18KG121TZ1D" (!) = "", "BLM18EG101TH1D", "Other", "81-BLM18KG121TZ1D", "https://www.mouser.co.uk/ProductDetail/Murata-Electronics/BLM18KG121TZ1D?qs=lEfY3O89Aqmt%252B40wz%2FCO1A%3D%3D", "BLM18KG121TZ1D", "https://www.arrow.com/en/products/blm18kg121tz1d/murata-manufacturing?region=nac", "BLM18_Z1D Series EMI Suppression Filter 120+/-25% at 100MHz 3A @85", "http://www.murata.com/~/media/webrenewal/support/library/catalog/products/emc/emifil/c31e.ashx?la=en-gb", "0.75 mm"
+END_PART
+
+END.

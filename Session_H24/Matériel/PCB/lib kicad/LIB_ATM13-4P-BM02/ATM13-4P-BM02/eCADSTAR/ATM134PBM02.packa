@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "ATM13-4P-BM02"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2022-01-29-07:33:44)
+    (mountForm default
+        (footprintRef "ATM134PBM02")
+        (spec "System")
+    )
+)

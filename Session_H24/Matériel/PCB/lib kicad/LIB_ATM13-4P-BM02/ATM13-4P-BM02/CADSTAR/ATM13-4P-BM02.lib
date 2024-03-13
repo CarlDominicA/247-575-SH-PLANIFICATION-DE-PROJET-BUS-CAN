@@ -1,0 +1,18 @@
+.ATM13-4P-BM02 :1 ;Automotive Connectors RA Flng Mnt PCB Rcpt 4POS Gry Gld Cont
+ATM134PBM02
+*STM J
+*NGS
+*PNM 1=1 2=2 3=3 4=4 5=MH1 6=MH2 7=MH3
+*PLB 1="1" 2="2" 3="3" 4="4" 5="MH1" 6="MH2" 7="MH3"
+*MXP 7
+*DFN ATM13-4P-BM02
+~!Manufacturer_Name (Amphenol)
+~!Manufacturer_Part_Number (ATM13-4P-BM02)
+~!Mouser Part Number (654-ATM13-4P-BM02)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Amphenol-SINE-Systems/ATM13-4P-BM02?qs=0lSvoLzn4L8TNire0wHiew%3D%3D)
+~!Arrow Part Number (ATM13-4P-BM02)
+~!Link Arrow Price/Stock (https://www.arrow.com/en/products/atm13-4p-bm02/amphenol?region=nac)
+~!Link Datasheet (https://www.amphenol-industrial.de/en/amph/download/getMime/YXRtMTMtNHAtYm0wMi1jZHIucGRm)
+~!Height (33.4mm)
+ATM13-4P-BM02
+1.1!U 2.1!U 3.1!U 4.1!U 5.1!U 6.1!U 7.1!U 

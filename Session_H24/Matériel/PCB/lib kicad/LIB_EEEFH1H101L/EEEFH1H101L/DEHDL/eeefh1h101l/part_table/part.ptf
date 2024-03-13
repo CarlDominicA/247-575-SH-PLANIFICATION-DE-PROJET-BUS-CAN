@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'EEEFH1H101L'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "ARROW_PART_NUMBER", "ARROW_PRICE/STOCK", "DESCRIPTION", "DATASHEET";
+{========================================================================================}
+ "Panasonic", "EEEFH1H101L" (!) = "", "EEETC1V470P", "Other", "", "", "", "", "Aluminium Electroyltic Capacitor, Radial", "http://industrial.panasonic.com/cdbs/www-data/pdf/RDE0000/ast-ind-166561.pdf"
+END_PART
+
+END.

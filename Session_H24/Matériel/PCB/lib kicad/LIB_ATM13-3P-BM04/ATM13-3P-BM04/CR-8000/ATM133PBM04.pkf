@@ -1,0 +1,10 @@
+(unit MM)
+
+(package "ATM133PBM04"
+    (type UNDEF)
+    (uver 2)
+    (mountForm default
+        (footprintRef "ATM133PBM04")
+        (spec "default")
+    )
+)

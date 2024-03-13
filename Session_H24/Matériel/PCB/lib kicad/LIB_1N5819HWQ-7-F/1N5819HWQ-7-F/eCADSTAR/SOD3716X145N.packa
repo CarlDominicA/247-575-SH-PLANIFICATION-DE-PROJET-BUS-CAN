@@ -1,0 +1,13 @@
+(unit MM)
+
+(package "1N5819HWQ-7-F"
+    (type UNDEF)
+    (uver 2)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (utime 2019-08-02-03:57:44)
+    (mountForm default
+        (footprintRef "SOD3716X145N")
+        (spec "System")
+    )
+)

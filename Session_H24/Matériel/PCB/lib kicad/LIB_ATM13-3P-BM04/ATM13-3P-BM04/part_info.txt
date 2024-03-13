@@ -1,0 +1,9 @@
+Manufacturer=Amphenol
+PartNumber=ATM13-3P-BM04
+PartCategory=Connector
+PackageCategory=Other
+PinCount=6
+Version=1.4
+Released=2021-03-29 07:30:40
+Downloaded=2024-02-12 16:04:25
+3D=N

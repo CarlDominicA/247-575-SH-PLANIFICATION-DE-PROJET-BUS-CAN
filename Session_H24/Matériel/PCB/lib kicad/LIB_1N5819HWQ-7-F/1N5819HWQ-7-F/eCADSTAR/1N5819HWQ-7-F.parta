@@ -1,0 +1,68 @@
+(Japanese_coding: sjis)
+(function "ECS_1827197"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2020-10-24-06:36:19)
+    (utime 2023-03-07-16:10:32)
+    (interface
+        (port "1" (symbPinId 1) (portType INOUT))
+        (port "2" (symbPinId 2) (portType INOUT))
+    )
+    (property "symbolName" "1N5819HWQ-7-F")
+)
+
+
+(pinAssign "ECS_1827197"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2020-10-24-06:36:19)
+    (utime 2023-03-07-16:10:32)
+    (interface
+        (port "1" (symbPinId 1) (portName "K") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "A") (portType INOUT))
+    )
+    (internal
+        (funcInst (functionRef "ECS_1827197")
+                (port "1" (match "1"))
+                (port "2" (match "2"))
+        )
+    )
+    (property "usePowerBox" "No")
+    (property "symbolName" "1N5819HWQ-7-F")
+)
+
+
+(part "1N5819HWQ-7-F"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2020-10-24-06:36:19)
+    (utime 2023-03-07-16:10:32)
+    (packageRef "1N5819HWQ-7-F")
+    (pinAssignRef "ECS_1827197")
+    (interface
+        (port "1" (symbPinId 1) (portName "K") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "A") (portType INOUT))
+    )
+    (partClass UNDEF)
+    (useInSchema Y)
+    (useInLayout Y)
+    (inPartsList Y)
+    (partType NORMAL)
+    (placeRestriction FREE)
+    (property "enetNonSeries" "NO")
+    (property "refDesPrefix" "D")
+    (property "description" "Schottky Diodes & Rectifiers Schottky Rectifier")
+    (property "Manufacturer_Name" "Diodes Incorporated")
+    (property "Manufacturer_Part_Number" "1N5819HWQ-7-F")
+    (property "Mouser_Part_Number" "621-1N5819HWQ-7-F")
+    (property "Mouser_Price/Stock" "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HWQ-7-F?qs=gZXFycFWdAPDr8BmsK1ygg%3D%3D")
+    (property "Arrow_Part_Number" "1N5819HWQ-7-F")
+    (property "Arrow_Price/Stock" "https://www.arrow.com/en/products/1n5819hwq-7-f/diodes-incorporated?region=asia")
+    (property "Datasheet_Link" "https://eu.mouser.com/datasheet/2/115/ds30217-1532212.pdf")
+    (property "compAreaTopHeight" 1.45)
+)
+
+

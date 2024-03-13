@@ -1,0 +1,67 @@
+(Japanese_coding: sjis)
+(function "ECS_15197671"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2021-09-30-12:13:09)
+    (utime 2024-01-22-06:25:29)
+    (interface
+        (port "1" (symbPinId 1) (portType INOUT))
+        (port "2" (symbPinId 2) (portType INOUT))
+    )
+    (property "symbolName" "EEEFH1H101L")
+)
+
+
+(pinAssign "ECS_15197671"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2021-09-30-12:13:09)
+    (utime 2024-01-22-06:25:29)
+    (interface
+        (port "1" (symbPinId 1) (portName "+") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "-") (portType INOUT))
+    )
+    (internal
+        (funcInst (functionRef "ECS_15197671")
+                (port "1" (match "1"))
+                (port "2" (match "2"))
+        )
+    )
+    (property "usePowerBox" "No")
+    (property "symbolName" "EEEFH1H101L")
+)
+
+
+(part "EEEFH1H101L"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2021-09-30-12:13:09)
+    (utime 2024-01-22-06:25:29)
+    (packageRef "EEEFH1H101L")
+    (pinAssignRef "ECS_15197671")
+    (interface
+        (port "1" (symbPinId 1) (portName "+") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "-") (portType INOUT))
+    )
+    (partClass UNDEF)
+    (useInSchema Y)
+    (useInLayout Y)
+    (inPartsList Y)
+    (partType NORMAL)
+    (placeRestriction FREE)
+    (property "enetNonSeries" "NO")
+    (property "refDesPrefix" "C")
+    (property "description" "Aluminium Electroyltic Capacitor, Radial")
+    (property "Manufacturer_Name" "Panasonic")
+    (property "Manufacturer_Part_Number" "EEEFH1H101L")
+    (property "Mouser_Part_Number" "")
+    (property "Mouser_Price/Stock" "")
+    (property "Arrow_Part_Number" "")
+    (property "Arrow_Price/Stock" "")
+    (property "Datasheet_Link" "http://industrial.panasonic.com/cdbs/www-data/pdf/RDE0000/ast-ind-166561.pdf")
+)
+
+

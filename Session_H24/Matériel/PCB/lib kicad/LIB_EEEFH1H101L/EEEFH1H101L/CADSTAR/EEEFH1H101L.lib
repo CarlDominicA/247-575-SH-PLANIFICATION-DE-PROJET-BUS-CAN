@@ -1,0 +1,18 @@
+.EEEFH1H101L :1 ;Aluminium Electroyltic Capacitor, Radial
+EEETC1V470P
+*STM C
+*NGS
+*PLB 1="+" 2="-"
+*MXP 2
+*DFN EEEFH1H101L
+~!Manufacturer_Name (Panasonic)
+~!Manufacturer_Part_Number (EEEFH1H101L)
+~!Mouser Part Number (-)
+~!Mouser Price/Stock (-)
+~!Arrow Part Number (-)
+~!Arrow Price/Stock (-)
+~!Link Datasheet (http://industrial.panasonic.com/cdbs/www-data/pdf/RDE0000/ast-ind-166561.pdf)
+~!Height (-)
+~!3D_Model (EEEFH1H101L)
+EEEFH1H101L
+1.1!U 2.1!U 

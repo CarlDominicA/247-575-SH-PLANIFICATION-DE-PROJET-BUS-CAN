@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'ATM13_3P_BM04'
+CLASS = IO
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "ARROW_PART_NUMBER", "ARROW_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Amphenol", "ATM13-3P-BM04" (!) = "", "ATM133PBM04", "Other", "654-ATM13-3P-BM04", "https://www.mouser.co.uk/ProductDetail/Amphenol-SINE-Systems/ATM13-3P-BM04?qs=0lSvoLzn4L%252BKLNuF8dKdNw%3D%3D", "ATM13-3P-BM04", "https://www.arrow.com/en/products/atm13-3p-bm04/amphenol-sine-systems?region=nac", "Automotive Connectors RA Flng Mnt PCB Rcpt 3POS Gry Tin Cont", "https://www.amphenol-sine.com/pdf/datasheet/ATM13-3P-BM04.pdf", "28.8 mm"
+END_PART
+
+END.

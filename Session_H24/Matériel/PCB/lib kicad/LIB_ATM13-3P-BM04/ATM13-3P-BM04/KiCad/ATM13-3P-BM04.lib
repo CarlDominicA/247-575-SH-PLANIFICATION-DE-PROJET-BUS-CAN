@@ -1,0 +1,29 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#SamacSys ECAD Model ATM13-3P-BM04
+#/2356908/1325814/2.50/6/3/Connector
+DEF ATM13-3P-BM04 J 0 30 Y Y 1 F N
+F0 "J" 750 300 50 H V L CNN
+F1 "ATM13-3P-BM04" 750 200 50 H V L CNN
+F2 "ATM133PBM04" 750 100 50 H I L CNN
+F3 "https://www.amphenol-sine.com/pdf/datasheet/ATM13-3P-BM04.pdf" 750 0 50 H I L CNN
+F4 "Automotive Connectors RA Flng Mnt PCB Rcpt 3POS Gry Tin Cont" 750 -100 50 H I L CNN "Description"
+F5 "28.8" 750 -200 50 H I L CNN "Height"
+F6 "Amphenol" 750 -300 50 H I L CNN "Manufacturer_Name"
+F7 "ATM13-3P-BM04" 750 -400 50 H I L CNN "Manufacturer_Part_Number"
+F8 "654-ATM13-3P-BM04" 750 -500 50 H I L CNN "Mouser Part Number"
+F9 "https://www.mouser.co.uk/ProductDetail/Amphenol-SINE-Systems/ATM13-3P-BM04?qs=0lSvoLzn4L%252BKLNuF8dKdNw%3D%3D" 750 -600 50 H I L CNN "Mouser Price/Stock"
+F10 "ATM13-3P-BM04" 750 -700 50 H I L CNN "Arrow Part Number"
+F11 "https://www.arrow.com/en/products/atm13-3p-bm04/amphenol-sine-systems?region=nac" 750 -800 50 H I L CNN "Arrow Price/Stock"
+DRAW
+X 1 1 0 0 200 R 50 50 0 0 P
+X 2 2 0 -100 200 R 50 50 0 0 P
+X 3 3 0 -200 200 R 50 50 0 0 P
+X MH1 MH1 900 0 200 L 50 50 0 0 P
+X MH2 MH2 900 -100 200 L 50 50 0 0 P
+X MH3 MH3 900 -200 200 L 50 50 0 0 P
+P 5 0 1 6 200 100 700 100 700 -300 200 -300 200 100 N
+ENDDRAW
+ENDDEF
+#
+#End Library

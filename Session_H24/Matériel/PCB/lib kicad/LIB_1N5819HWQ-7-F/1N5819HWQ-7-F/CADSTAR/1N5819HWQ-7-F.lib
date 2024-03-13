@@ -1,0 +1,18 @@
+.1N5819HWQ-7-F :1 ;Schottky Diodes & Rectifiers Schottky Rectifier
+SOD3716X145N
+*STM D
+*NGS
+*PLB 1="K" 2="A"
+*MXP 2
+*DFN 1N5819HWQ-7-F
+~!Manufacturer_Name (Diodes Incorporated)
+~!Manufacturer_Part_Number (1N5819HWQ-7-F)
+~!Mouser Part Number (621-1N5819HWQ-7-F)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HWQ-7-F?qs=gZXFycFWdAPDr8BmsK1ygg%3D%3D)
+~!Arrow Part Number (1N5819HWQ-7-F)
+~!Link Arrow Price/Stock (https://www.arrow.com/en/products/1n5819hwq-7-f/diodes-incorporated?region=asia)
+~!Link Datasheet (https://eu.mouser.com/datasheet/2/115/ds30217-1532212.pdf)
+~!Height (1.45mm)
+~!3D_Model (1N5819HWQ-7-F)
+"1N5819HWQ-7-F"
+1.1!U 2.1!U 
