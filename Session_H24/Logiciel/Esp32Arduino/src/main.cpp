@@ -1,6 +1,9 @@
-//Brief: Ce code est conçu pour un microcontrôleur esp32-c3-devkitc-02, utilisant le langage ARDUINO et les bibliothèques Wire pour la communication I2C et ESP32-TWAI-CAN pour la 
-//communication CAN. L'objectif principal est la lecture d'une valeur analogique à partir d'un convertisseur analogique-numérique (CAN) 
-//MCP3221 et l'envoi de cette valeur sur le bus CAN.
+//  Brief: Ce code est conçu pour un microcontrôleur esp32-c3-devkitc-02, utilisant le langage ARDUINO et les bibliothèques Wire pour la communication I2C et ESP32-TWAI-CAN pour la 
+//  communication CAN. L'objectif principal est la lecture d'une valeur analogique à partir d'un convertisseur analogique-numérique (CAN) 
+//  MCP3221 et l'envoi de cette valeur sur le bus CAN.
+//  Auteur: Mamoune Benmensour & Carl-Dominic Aubin
+//  Date: 13 Mars 2024
+//  Matériel: Esp32-C3 devkit-02, MCP3221, TJA1050, Potentiometre
 
 //Les Includes
 #include <Arduino.h>
@@ -10,7 +13,7 @@
 
 //broches TX RX pour la communication CAN
 #define CAN_TX 1 
-#define CAN_RX 3 
+#define CAN_RX 6
 
 //Constantes et variables globales
 unsigned long dernierTemps = 0;
@@ -22,6 +25,7 @@ const int printInfosSerie = 1;      // 1 pour imprimer les informations sur le p
 double lireMCP3221(int adresseMCP3221, int printInfo);
 double convertDbyte_Double(byte msb, byte lsb);
 void printINFO(byte msb, byte lsb);
+void sendPotentiometerValue(int potValue); // Change data type
 
 void setup() {
   Wire.begin(8, 9); // Configure les broches SDA = 8 et SCL = 9 // Initialisation de la communication I2C
@@ -88,30 +92,43 @@ void printINFO(byte msb, byte lsb) {
 
 
 // Prépare et envoie la valeur du potentiomètre via le bus CAN en créant un message CAN avec l'ID approprié et les données correspondantes.
-void sendPotentiometerValue(uint16_t potValue) {
+void sendPotentiometerValue(int potValue) {
+    char bufferPotValue[5]; // Buffer for converting int to string with fixed length
+    snprintf(bufferPotValue, sizeof(bufferPotValue), "%04d", potValue); // Convert int to string
+
+    // Configure CAN message
     CanFrame potFrame = { 0 };
     potFrame.identifier = 0xB; // ID du message CAN
     potFrame.extd = 0;
     potFrame.data_length_code = 8;
 
-    uint8_t* bufferPotValue = reinterpret_cast<uint8_t*>(&potValue); // Copie chaque octet du buffer dans le message CAN
-    for (int i = 0; i < 2; i++) {
+    // Copy each character from the string into the CAN message data bytes
+    for (int i = 0; i < 4; i++) {
         potFrame.data[i] = bufferPotValue[i];
     }
 
-    potFrame.data[2] = 0; 
-    potFrame.data[3] = 0;
-    potFrame.data[4] = 0;
+    potFrame.data[4] = 0; 
     potFrame.data[5] = 0;
     potFrame.data[6] = 0;
     potFrame.data[7] = 0;
 
+    // affiche les informations du message CAN avant de l'envoyer
+    Serial.print("Envoi de trame CAN avec ID: ");
+    Serial.println(potFrame.identifier, HEX);
+    Serial.print("Données: ");
+    for (int i = 0; i < 8; i++) {
+        Serial.print(potFrame.data[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+
+    // envoi CAN message
     ESP32Can.writeFrame(potFrame);
 }
 
-
 void loop() {
   double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie); // mesurer et afficher les valeurs des canaux
+  int intValue = static_cast<int>(valeurCanal); // Convert to int
   delay(1000); //1 seconde avant la prochaine mesure
-  sendPotentiometerValue(valeurCanal); //Envoie la valeur lue via le bus CAN à l'aide de la fonction sendPotentiometerValue
+  sendPotentiometerValue(intValue); // Send the value via CAN
 }
