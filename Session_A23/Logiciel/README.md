@@ -1,4 +1,16 @@
 **Ce projet est basé sur le esp32-C3 sur un workspace platformIO IDE pour Visual Studio Code**
 
 
-![ImageStaticAffiche_CapteurCAN](https://github.com/CarlDominicA/Projet_Module_CAN/assets/97920084/0c7b7774-fba3-4f5c-ab59-0fe8e7419acd)
+## Pour Commencer
+
+Ces instructions vous guideront pour configurer votre projet PlatformIO en utilisant Visual Studio Code.
+
+### Prérequis
+
+Vous devez avoir Visual Studio Code installé sur votre machine.
+
+### Installation
+
+**Installer l'extension PlatformIO** : Ouvrez Visual Studio Code, allez dans Extensions (Ctrl+Shift+X), recherchez "PlatformIO IDE", et installez-le.
+
+
