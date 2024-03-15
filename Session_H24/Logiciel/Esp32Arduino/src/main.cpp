@@ -1,8 +1,11 @@
 //  Brief: Ce code est conçu pour un microcontrôleur esp32-c3-devkitc-02, utilisant le langage ARDUINO et les bibliothèques Wire pour la communication I2C et ESP32-TWAI-CAN pour la 
 //  communication CAN. L'objectif principal est la lecture d'une valeur analogique à partir d'un convertisseur analogique-numérique (CAN) 
 //  MCP3221 et l'envoi de cette valeur sur le bus CAN.
+
 //  Auteur: Mamoune Benmensour & Carl-Dominic Aubin
+
 //  Date: 13 Mars 2024
+
 //  Matériel: Esp32-C3 devkit-02, MCP3221, TJA1050, Potentiometre
 
 //Les Includes
