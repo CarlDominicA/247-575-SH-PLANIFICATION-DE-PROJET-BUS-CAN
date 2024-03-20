@@ -145,8 +145,7 @@ void sendPotentiometerValue(int potValue, int valeurADC) {
 void loop() {
     // Mesurer et afficher les valeurs des canaux
     double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie);
-    //int intValue = static_cast<int>(valeurCanal); // Convertir en entier
-
+    
     // Récupérer les valeurs MSB et LSB en appelant lireMCP3221
     byte msb, lsb;
     Wire.beginTransmission(adresseCAN);
