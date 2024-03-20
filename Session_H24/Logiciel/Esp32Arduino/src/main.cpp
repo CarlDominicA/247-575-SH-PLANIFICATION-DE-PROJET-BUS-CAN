@@ -27,8 +27,8 @@ const int printInfosSerie = 1;      // 1 pour imprimer les informations sur le p
 //delcaration des fonctions
 double lireMCP3221(int adresseMCP3221, int printInfo);
 double convertDbyte_Double(byte msb, byte lsb);
-void printINFO(byte msb, byte lsb);
-void sendPotentiometerValue(int potValue); // Change data type
+int printINFO(byte msb, byte lsb);
+void sendPotentiometerValue(int potValue, int valeurADC);
 
 void setup() {
   Wire.begin(8, 9); // Configure les broches SDA = 8 et SCL = 9 // Initialisation de la communication I2C
@@ -81,7 +81,7 @@ double convertDbyte_Double(byte msb, byte lsb) {
 
 
 // Imprime les informations sur la valeur ADC et la tension correspondante en mV.
-void printINFO(byte msb, byte lsb) {
+int printINFO(byte msb, byte lsb) {
   Serial.print("Valeur ADC (12 bits) = ");
 
   int valeurADC = ((msb & 0x0F) << 8) | lsb; // Conversion de l'octet MSB et de l'octet LSB en une valeur ADC sur 12 bits
@@ -91,47 +91,76 @@ void printINFO(byte msb, byte lsb) {
   double tension_mV = convertDbyte_Double(msb, lsb) * 1000; // Conversion de la tension en mV
   Serial.print("Tension (mV) = ");
   Serial.println(tension_mV);
+
+  return valeurADC;
+}
+
+int valeurADC_12(byte msb, byte lsb) {
+    int valeur_ADC = ((msb & 0x0F) << 8) | lsb; // Conversion de l'octet MSB et de l'octet LSB en une valeur ADC sur 12 bits
+    return valeur_ADC;
 }
 
 
-// Prépare et envoie la valeur du potentiomètre via le bus CAN en créant un message CAN avec l'ID approprié et les données correspondantes.
-void sendPotentiometerValue(int potValue) {
-    char bufferPotValue[5]; // Buffer for converting int to string with fixed length
-    snprintf(bufferPotValue, sizeof(bufferPotValue), "%04d", potValue); // Convert int to string
-
-    // Configure CAN message
+void sendPotentiometerValue(int potValue, int valeurADC) {
+    // Configurer le message CAN
     CanFrame potFrame = { 0 };
-    potFrame.identifier = 0xB; // ID du message CAN
-    potFrame.extd = 0;
+    potFrame.identifier = 0x2; // ID du message CAN
+    potFrame.extd = 0; // 0 pour une trame standard (11 bits) et 1 pour une trame étendue (29 bits)
     potFrame.data_length_code = 8;
 
-    // Copy each character from the string into the CAN message data bytes
+    // Remplir le reste des octets de données avec des zéros
     for (int i = 0; i < 4; i++) {
-        potFrame.data[i] = bufferPotValue[i];
+        potFrame.data[i] = '0';
     }
 
-    potFrame.data[4] = 0; 
-    potFrame.data[5] = 0;
-    potFrame.data[6] = 0;
-    potFrame.data[7] = 0;
+    // Convertir les entiers en caractères ASCII
+    char digit1 = '0' + (potValue / 1000) % 10;  // Milliers
+    char digit2 = '0' + (potValue / 100) % 10; // Centaines
+    char digit3 = '0' + (potValue / 10) % 10; // Dizaines
+    char digit4 = '0' + potValue % 10; // Unités
 
-    // affiche les informations du message CAN avant de l'envoyer
+    // Assigner chaque caractère à l'octet de données correspondant dans potFrame
+    potFrame.data[4] = digit1;
+    potFrame.data[5] = digit2;
+    potFrame.data[6] = digit3;
+    potFrame.data[7] = digit4;
+
+    // Afficher les informations sur le message CAN avant l'envoi
     Serial.print("Envoi de trame CAN avec ID: ");
-    Serial.println(potFrame.identifier, HEX);
+    Serial.println(potFrame.identifier);
+
     Serial.print("Données: ");
     for (int i = 0; i < 8; i++) {
-        Serial.print(potFrame.data[i], HEX);
+        Serial.print((char)potFrame.data[i]); // Afficher chaque octet comme un caractère
         Serial.print(" ");
     }
     Serial.println();
+    Serial.print("valeur du potentiomètre ");
+    Serial.println(potValue);
 
-    // envoi CAN message
+    // Envoyer le message CAN
     ESP32Can.writeFrame(potFrame);
 }
 
 void loop() {
-  double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie); // mesurer et afficher les valeurs des canaux
-  int intValue = static_cast<int>(valeurCanal); // Convert to int
-  delay(1000); //1 seconde avant la prochaine mesure
-  sendPotentiometerValue(intValue); // Send the value via CAN
+    // Mesurer et afficher les valeurs des canaux
+    double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie);
+    //int intValue = static_cast<int>(valeurCanal); // Convertir en entier
+
+    // Récupérer les valeurs MSB et LSB en appelant lireMCP3221
+    byte msb, lsb;
+    Wire.beginTransmission(adresseCAN);
+    Wire.endTransmission();
+    delayMicroseconds(150);
+    Wire.requestFrom(adresseCAN, 2);
+    msb = Wire.read();
+    lsb = Wire.read();
+
+    // Appel de la fonction valeurADC_12 avec les octets MSB et LSB
+    int v = valeurADC_12(msb, lsb);
+
+    int value = printINFO(msb, lsb);
+
+    delay(1000); // 1 seconde avant la prochaine mesure
+    sendPotentiometerValue(value, v); // Envoyer la valeur via CAN
 }
