@@ -1,4 +1,13 @@
-//Brief: code fonctionnement MCP3221
+//  Brief: code fonctionnement MCP3221, ce code est conçu pour un microcontrôleur esp32-c3-devkitc-02, utilisant le langage ARDUINO et les bibliothèques 
+//  Wire pour la communication I2C. L'objectif principal est la lecture d'une valeur analogique à partir d'un convertisseur analogique-numérique (CAN) 
+//  MCP3221
+
+//  Auteur: Mamoune Benmensour & Carl-Dominic Aubin
+
+//  Date: 13 Mars 2024
+
+//  Matériel: Esp32-C3 devkit-02, MCP3221, TJA1050, Potentiometre
+
 
 #include <Arduino.h>
 #include <Wire.h> // pour communication I2C
@@ -36,8 +45,7 @@ double lireMCP3221(int adresseMCP3221, int printInfo) {
   if (printInfo) {
     printINFO(octetMSB, octetLSB);
   }
-
-  return convertDbyte_Double(octetMSB, octetLSB);
+    return convertDbyte_Double(octetMSB, octetLSB);
 }
 
 double convertDbyte_Double(byte msb, byte lsb) {
