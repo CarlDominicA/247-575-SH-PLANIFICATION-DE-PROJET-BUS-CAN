@@ -15,6 +15,8 @@
 #define CAN_TX 1 
 #define CAN_RX 6
 
+CanFrame rxFrame;
+
 //Constantes et variables globales
 unsigned long dernierTemps = 0;
 const byte adresseCAN = 0x4D; // Adresse du MCP3221A5T-E/OT 
@@ -25,7 +27,8 @@ const int printInfosSerie = 1;      // 1 pour imprimer les informations sur le p
 double lireMCP3221(int adresseMCP3221, int printInfo);
 double convertDbyte_Double(byte msb, byte lsb);
 int printINFO(byte msb, byte lsb);
-void sendPotentiometerValue(int potValue, int valeurADC);
+void sendPotentiometerValue(int potValue, int valeurADC, int decimalID);
+int getDecimalID(int hexID);
 
 void setup() {
   Wire.begin(8, 9); // Configure les broches SDA = 8 et SCL = 9 // Initialisation de la communication I2C
@@ -99,53 +102,16 @@ int valeurADC_12(byte msb, byte lsb) {
 
 
 
-// Prépare et envoie la valeur du potentiomètre via le bus CAN en créant un message CAN avec l'ID approprié et les données correspondantes.
-/*void sendPotentiometerValue(int potValue, int valeurADC) {
-    // Configure CAN message
-    CanFrame potFrame = { 0 };
-    potFrame.identifier = 0x2; // ID du message CAN
-    potFrame.extd = 0; // 0 pour une trame standard (11 bits) et 1 pour une trame étendue (29 bits)
-    potFrame.data_length_code = 8;
 
-    // Extract individual digits from valeurADC
-    int digit1 = valeurADC / 1000;  // Thousands place
-    int digit2 = (valeurADC / 100) % 10; // Hundreds place
-    int digit3 = (valeurADC / 10) % 10; // Tens place
-    int digit4 = valeurADC % 10; // Units place
 
-    // Assign each digit to the corresponding data byte in potFrame
-    potFrame.data[0] = digit1;
-    potFrame.data[1] = digit2;
-    potFrame.data[2] = digit3;
-    potFrame.data[3] = digit4;
-
-    // Fill the rest of the data bytes with zeros
-    for (int i = 4; i < 8; i++) {
-        potFrame.data[i] = 0;
-    }
-
-    // Print CAN message information before sending
-    Serial.print("Envoi de trame CAN avec ID: ");
-    Serial.println(potFrame.identifier);
-    Serial.print("Données: ");
-    for (int i = 0; i < 8; i++) {
-        Serial.print(potFrame.data[i]);
-        Serial.print(" ");
-    }
-    Serial.println();
-
-    // Send CAN message
-    ESP32Can.writeFrame(potFrame);
-}
-*/
-
-void sendPotentiometerValue(int potValue, int valeurADC) {
+void sendPotentiometerValue(int potValue, int valeurADC, int decimalID) {
     // Configurer le message CAN
     CanFrame potFrame = { 0 };
-    potFrame.identifier = 0x2; // ID du message CAN
+    potFrame.identifier = decimalID; // Utiliser l'ID décimal correspondant
     potFrame.extd = 0; // 0 pour une trame standard (11 bits) et 1 pour une trame étendue (29 bits)
     potFrame.data_length_code = 8;
-
+    //potFrame.rtr = 0;
+    
     // Remplir le reste des octets de données avec des zéros
     for (int i = 0; i < 4; i++) {
         potFrame.data[i] = '0';
@@ -180,6 +146,93 @@ void sendPotentiometerValue(int potValue, int valeurADC) {
     ESP32Can.writeFrame(potFrame);
 }
 
+// Retourne le ID (en décimal) correspondant pour chaque type de capteurs
+int getDecimalID(int hexID) {
+    int decimalID = -1; // Initialiser à -1 pour gérer les ID non répertoriés
+
+    switch (hexID) {
+        case 0xA0:
+            decimalID = 528; //Temperature Set 1
+            break;
+        case 0xA1:
+            decimalID = 529; //Temperature Set 2
+            break;
+        case 0xA2:
+            decimalID = 530; //Temperature Set 3
+            break;
+        case 0xA3:
+            decimalID = 531; //Analog input Voltages
+            break;
+        case 0xA4:
+            decimalID = 532; //Digital input status
+            break;
+        case 0xA5:
+            decimalID = 533; //Motor position info
+            break;
+        case 0xA6:
+            decimalID = 534; //Current Info
+            break;
+        case 0xA7:
+            decimalID = 535;  //Voltage info
+            break;
+        case 0xA8:
+            decimalID = 536; //Flux ID IQ info
+            break;
+        case 0xA9:
+            decimalID = 537;  //Internal Voltages
+            break;
+        case 0xAA:
+            decimalID = 538;  //Internal states
+            break;
+        case 0xAB:
+            decimalID = 539;  //Fault Codes
+            break;
+        case 0xAC:
+            decimalID = 540;  //Torque and Timer info
+            break;
+        case 0xAD:
+            decimalID = 541; //Modulation and Flux info
+            break;
+        case 0xAE:
+            decimalID = 542;  //Firmware info
+            break;
+        case 0xAF:
+            decimalID = 543; //Diag Data
+            break;
+        case 0xB0:
+            decimalID = 544; //Fast info
+            break;
+        case 0xBB:
+            decimalID = 545; //U2C Command Txd
+            break;
+        case 0xBC:
+            decimalID = 546; //U2C Command Rxd
+            break;
+        case 0xC0:
+            decimalID = 547; //Command Message
+            break;
+        case 0xC1:
+            decimalID = 548; //Read Write Param Command
+            break;
+        case 0xC2:
+            decimalID = 549; //Read Write Param Response
+            break;
+        case 0x1D5:
+            decimalID = 550;  //U2C_Message_Rxd
+            break;
+        case 0x1D7:
+            decimalID = 551;  //U2C_Command_Txd
+            break;
+        case 0x202:
+            decimalID = 552; //BMS Current Limit
+            break;
+    }
+
+    return decimalID;
+}
+
+
+
 void loop() {
     // Mesurer et afficher les valeurs des canaux
     double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie);
@@ -196,11 +249,16 @@ void loop() {
 
     // Appel de la fonction valeurADC_12 avec les octets MSB et LSB
     int v = valeurADC_12(msb, lsb);
-
     int value = printINFO(msb, lsb);
 
+    int hexID = 0x202; // ID hexadécimal pour BMS Current Limit
+    int decimalID = getDecimalID(hexID); // Obtenir l'ID décimal correspondant
+
     delay(1000); // 1 seconde avant la prochaine mesure
-    sendPotentiometerValue(value, v); // Envoyer la valeur via CAN
+    
+    sendPotentiometerValue(value, v, decimalID);  // Envoyer la valeur via CAN avec l'ID correspondant
+
 }
+
 
 
