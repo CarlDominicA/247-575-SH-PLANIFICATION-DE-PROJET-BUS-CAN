@@ -5,15 +5,21 @@
 //  Date: 13 Mars 2024
 //  Matériel: Esp32-C3 devkit-02, MCP3221, TJA1050, Potentiometre
 
+//esp32-c3-devkitc-02
+
+
 //Les Includes
 #include <Arduino.h>
 #include <Wire.h> // pour communication I2C
 #include "MCP3X21.h" //librairie pour MP3221
 #include <ESP32-TWAI-CAN.hpp> //TWAI Esp32
 
+
 //broches TX RX pour la communication CAN
-#define CAN_TX 1 
-#define CAN_RX 6
+//#define CAN_TX GPIO_NUM_1 
+//#define CAN_RX GPIO_NUM_6
+#define CAN_TX GPIO_NUM_21
+#define CAN_RX GPIO_NUM_20
 
 CanFrame rxFrame;
 
@@ -31,13 +37,18 @@ void sendPotentiometerValue(int potValue, int valeurADC, int decimalID);
 int getDecimalID(int hexID);
 
 void setup() {
-  Wire.begin(8, 9); // Configure les broches SDA = 8 et SCL = 9 // Initialisation de la communication I2C
+
+    /*pinMode(GPIO_NUM_2, OUTPUT); // Définir la broche GPIO comme sortie
+    digitalWrite(GPIO_NUM_2, LOW); // Mettre la broche GPIO en niveau haut */
+
+    Wire.begin(GPIO_NUM_6, GPIO_NUM_7);
+  //Wire.begin(GPIO_NUM_8, GPIO_NUM_9); // Configure les broches SDA = 8 et SCL = 9 // Initialisation de la communication I2C
   Serial.begin(115200); // initialisation du port série
   dernierTemps = millis(); // initialisation du temps
 
     ESP32Can.setPins(CAN_TX, CAN_RX); // Initialisation de la communication CAN
-    ESP32Can.setRxQueueSize(5);
-    ESP32Can.setTxQueueSize(5);
+    ESP32Can.setRxQueueSize(1); //5
+    ESP32Can.setTxQueueSize(1); //5
     ESP32Can.setSpeed(ESP32Can.convertSpeed(500));
 
     if (ESP32Can.begin()) {
@@ -64,6 +75,8 @@ double lireMCP3221(int adresseMCP3221, int printInfo) {
   if (printInfo) {
     printINFO(octetMSB, octetLSB);
   }
+
+ // i2cRead();
 
   return convertDbyte_Double(octetMSB, octetLSB);
 }
@@ -99,8 +112,6 @@ int valeurADC_12(byte msb, byte lsb) {
     int valeur_ADC = ((msb & 0x0F) << 8) | lsb; // Conversion de l'octet MSB et de l'octet LSB en une valeur ADC sur 12 bits
     return valeur_ADC;
 }
-
-
 
 
 
@@ -144,6 +155,7 @@ void sendPotentiometerValue(int potValue, int valeurADC, int decimalID) {
 
     // Envoyer le message CAN
     ESP32Can.writeFrame(potFrame);
+    //ESP32Can.readFrame(potFrame)
 }
 
 // Retourne le ID (en décimal) correspondant pour chaque type de capteurs
@@ -232,7 +244,6 @@ int getDecimalID(int hexID) {
 }
 
 
-
 void loop() {
     // Mesurer et afficher les valeurs des canaux
     double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie);
@@ -254,11 +265,9 @@ void loop() {
     int hexID = 0x202; // ID hexadécimal pour BMS Current Limit
     int decimalID = getDecimalID(hexID); // Obtenir l'ID décimal correspondant
 
-    delay(1000); // 1 seconde avant la prochaine mesure
+    delay(50); // 1 seconde avant la prochaine mesure
+    
     
     sendPotentiometerValue(value, v, decimalID);  // Envoyer la valeur via CAN avec l'ID correspondant
 
 }
-
-
-
