@@ -4,11 +4,11 @@
 
 //  Auteur: Mamoune Benmensour & Carl-Dominic Aubin
 
-//  Date: 13 Mars 2024
+//  Date: 19 Avril 2024
 
 //  Matériel: Esp32-C3 devkit-02, MCP3221, TJA1050, Potentiometre
 
-
+//Les Includes
 #include <Arduino.h>
 #include <Wire.h> // pour communication I2C
 #include "MCP3X21.h"
