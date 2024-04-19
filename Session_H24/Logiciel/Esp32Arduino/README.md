@@ -8,7 +8,7 @@ Ce projet utilise un microcontrôleur ESP32-C3 XIAO SEED pour lire une valeur an
 - Carl-Dominic Aubin
 
 ## Date
-13 Mars 2024
+19 Avril 2024
 
 ## Matériel Requis
 - ESP32-C3 XIAO SEED
