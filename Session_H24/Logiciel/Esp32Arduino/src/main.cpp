@@ -4,46 +4,51 @@
 
 //  Auteur: Mamoune Benmensour & Carl-Dominic Aubin
 
-//  Date: 19 Avril 2024
+//  Date: 22 Avril 2024
 
 //  Matériel: Esp32-C3 devkit-02, MCP3221, TJA1050, Potentiometre
 
 
-#include "DecimalID.h"  // Inclure le fichier pour DECIMAL_ID
-#include <Arduino.h>
-#include <Wire.h> // pour communication I2C
-#include "MCP3X21.h" //librairie pour MP3221
-#include <ESP32-TWAI-CAN.hpp> //TWAI Esp32
+// Inclusion des bibliothèques nécessaires
+#include "DecimalID.h"  // Fichier pour l'identification décimale dans les messages CAN
+#include <Arduino.h>    // Bibliothèque principale pour Arduino
+#include <Wire.h>       // Bibliothèque pour la communication I2C
+#include "MCP3X21.h"    // Bibliothèque pour le capteur ADC MCP3221
+#include <ESP32-TWAI-CAN.hpp> // Bibliothèque pour utiliser le protocole CAN avec un ESP32
 
+// Définition des broches pour la transmission CAN
 #define CAN_TX GPIO_NUM_21
 #define CAN_RX GPIO_NUM_20
 
-CanFrame rxFrame;
+// Variables globales
+unsigned long dernierTemps = 0;    // Stocke le dernier temps enregistré
+const byte adresseCAN = 0x4D;      // Adresse I2C du MCP3221 sur le bus
+const double vRef = 5.0;           // Référence de tension pour le calcul de la tension réelle
+const int printInfosSerie = 1;     // Contrôle l'affichage des informations sur le port série
 
-unsigned long dernierTemps = 0;
-const byte adresseCAN = 0x4D;
-const double vRef = 5.0;
-const int printInfosSerie = 1;
-
+// Prototypes de fonction
 double lireMCP3221(int adresseMCP3221, int printInfo);
 double convertDbyte_Double(byte msb, byte lsb);
 int printINFO(byte msb, byte lsb);
 void sendPotentiometerValue(double volts);
 int getDecimalID(int hexID);
 
+// Configuration initiale
 void setup() {
     pinMode(GPIO_NUM_2, OUTPUT);
-    digitalWrite(GPIO_NUM_2, HIGH);
+    digitalWrite(GPIO_NUM_2, HIGH); // Mettre la broche GPIO en état haut
 
-    Wire.begin(GPIO_NUM_6, GPIO_NUM_7);
-    Serial.begin(115200);
-    dernierTemps = millis();
+    Wire.begin(GPIO_NUM_6, GPIO_NUM_7); // Initialiser le bus I2C
+    Serial.begin(115200); // Démarrer la communication série à 115200 bauds
+    dernierTemps = millis(); // Enregistrer le temps actuel
 
-    ESP32Can.setPins(CAN_TX, CAN_RX);
-    ESP32Can.setRxQueueSize(1);
-    ESP32Can.setTxQueueSize(1);
-    ESP32Can.setSpeed(ESP32Can.convertSpeed(1000));
+    // Configuration du bus CAN
+    ESP32Can.setPins(CAN_TX, CAN_RX); // Définir les broches pour le CAN
+    ESP32Can.setRxQueueSize(1); // Taille de la file d'attente de réception
+    ESP32Can.setTxQueueSize(1); // Taille de la file d'attente de transmission
+    ESP32Can.setSpeed(ESP32Can.convertSpeed(1000)); // Vitesse du bus CAN à 1000 kbps
 
+    // Démarrage du bus CAN
     if (ESP32Can.begin()) {
         Serial.println("Bus CAN démarré !");
     } else {
@@ -51,35 +56,39 @@ void setup() {
     }
 }
 
+// Lecture des données depuis le MCP3221
 double lireMCP3221(int adresseMCP3221, int printInfo) {
     Wire.beginTransmission(adresseMCP3221);
     Wire.endTransmission();
-    delayMicroseconds(150);
-    Wire.requestFrom(adresseMCP3221, 2);
-    byte octetMSB = Wire.read();
-    byte octetLSB = Wire.read();
+    delayMicroseconds(150); // Petit délai pour la stabilité
+    Wire.requestFrom(adresseMCP3221, 2); // Demander 2 octets depuis le MCP3221
+    byte octetMSB = Wire.read(); // Lire l'octet de poids fort
+    byte octetLSB = Wire.read(); // Lire l'octet de poids faible
     if (printInfo) {
         printINFO(octetMSB, octetLSB);
     }
     return convertDbyte_Double(octetMSB, octetLSB);
 }
 
+// Convertir les octets lus en une valeur de tension double
 double convertDbyte_Double(byte msb, byte lsb) {
-    int value = ((msb & 0x0F) << 8) | lsb;
-    return (double)value * vRef / 4095.0;
+    int value = ((msb & 0x0F) << 8) | lsb; // Combinaison des deux octets en une valeur sur 12 bits
+    return (double)value * vRef / 4095.0; // Convertir en tension en utilisant la référence et la résolution
 }
 
+// Afficher les informations de diagnostic sur la valeur ADC et la tension calculée
 int printINFO(byte msb, byte lsb) {
-    int valeurADC = ((msb & 0x0F) << 8) | lsb;
+    int valeurADC = ((msb & 0x0F) << 8) | lsb; // Calculer la valeur ADC
     Serial.print("Valeur ADC (12 bits) = ");
     Serial.print(valeurADC);
     Serial.println();
-    double tension_mV = convertDbyte_Double(msb, lsb) * 1000;
+    double tension_mV = convertDbyte_Double(msb, lsb) * 1000; // Convertir en millivolts
     Serial.print("Tension (mV) = ");
     Serial.println(tension_mV);
     return valeurADC;
 }
 
+// Envoyer la valeur de tension mesurée sur le bus CAN
 void sendPotentiometerValue(double volts) {
     CanFrame potFrame = { 0 };
     potFrame.identifier = DECIMAL_ID;
@@ -92,15 +101,16 @@ void sendPotentiometerValue(double volts) {
     potFrame.data[0] = canVolts;
     potFrame.data[1] = canCentiVolts;
 
+    // Mettre à zéro les autres octets
     for (int i = 2; i < 8; i++) {
-        potFrame.data[i] = 0; // remplir les autres octets de données avec des zéros
+        potFrame.data[i] = 0;
     }
 
     Serial.print("Envoi de trame CAN avec ID: ");
     Serial.println(potFrame.identifier);
     Serial.print("Données: ");
     for (int i = 0; i < 8; i++) {
-        Serial.print((int)potFrame.data[i]);  // Afficher chaque octet comme un nombre entier
+        Serial.print((int)potFrame.data[i]);
         Serial.print(" ");
     }
     Serial.println();
@@ -108,9 +118,9 @@ void sendPotentiometerValue(double volts) {
     ESP32Can.writeFrame(potFrame);
 }
 
-
+// Boucle principale du programme
 void loop() {
-    double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie);
-    sendPotentiometerValue(valeurCanal);
-    delay(500);
+    double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie); // Lire la valeur du canal ADC
+    sendPotentiometerValue(valeurCanal); // Envoyer cette valeur via CAN
+    delay(500); // Attendre un demi-seconde
 }
