@@ -177,5 +177,5 @@ void loop() {
                                                                         // prend en oarametre l'adresse I2C du MCP3221
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    delay(500); // Attendre un demi-seconde
+    delay(50); // Attendre un demi-seconde
 }
