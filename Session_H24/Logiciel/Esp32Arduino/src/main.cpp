@@ -6,48 +6,43 @@
 
 //  Date: 19 Avril 2024
 
-//  Matériel: ESP32-C3 XIAO SEED, MCP3221, TJA1050, Potentiometre
+//  Matériel: Esp32-C3 devkit-02, MCP3221, TJA1050, Potentiometre
 
 
-//Les Includes
+#include "DecimalID.h"  // Inclure le fichier pour DECIMAL_ID
 #include <Arduino.h>
 #include <Wire.h> // pour communication I2C
 #include "MCP3X21.h" //librairie pour MP3221
 #include <ESP32-TWAI-CAN.hpp> //TWAI Esp32
 
-
-//broches TX RX pour la communication CAN
-
 #define CAN_TX GPIO_NUM_21
 #define CAN_RX GPIO_NUM_20
 
+CanFrame rxFrame;
 
-//Constantes et variables globales
 unsigned long dernierTemps = 0;
-const byte adresseCAN = 0x4D; // Adresse du MCP3221A5T-E/OT 
-const double vRef = 5.0;       // valeur de la référence de tension interne en Volts
-const int printInfosSerie = 1;      // 1 pour imprimer les informations sur le port série, 0 pour ne pas afficher
+const byte adresseCAN = 0x4D;
+const double vRef = 5.0;
+const int printInfosSerie = 1;
 
-//delcaration des fonctions
 double lireMCP3221(int adresseMCP3221, int printInfo);
 double convertDbyte_Double(byte msb, byte lsb);
 int printINFO(byte msb, byte lsb);
-void sendPotentiometerValue(int potValue, int valeurADC, int decimalID);
+void sendPotentiometerValue(double volts);
 int getDecimalID(int hexID);
 
 void setup() {
+    pinMode(GPIO_NUM_2, OUTPUT);
+    digitalWrite(GPIO_NUM_2, HIGH);
 
-    pinMode(GPIO_NUM_2, OUTPUT); // Définir la broche GPIO comme sortie
-    digitalWrite(GPIO_NUM_2, LOW); // Mettre la broche GPIO en niveau haut 
+    Wire.begin(GPIO_NUM_6, GPIO_NUM_7);
+    Serial.begin(115200);
+    dernierTemps = millis();
 
-    Wire.begin(GPIO_NUM_6, GPIO_NUM_7); // Configure les broches SDA = 6 et SCL = 7, Initialisation de la communication I2C
-    Serial.begin(115200); // initialisation du port série
-    dernierTemps = millis(); // initialisation du temps
-
-    ESP32Can.setPins(CAN_TX, CAN_RX); // Initialisation de la communication CAN
-    ESP32Can.setRxQueueSize(1); //définit la taille de la file d'attente de réception (Rx)
-    ESP32Can.setTxQueueSize(1); //définit la taille de la file d'attente de transmission (Tx) 
-    ESP32Can.setSpeed(ESP32Can.convertSpeed(1000)); //SetSpeed() définit la vitesse de communication CAN: 1000 kbit/s
+    ESP32Can.setPins(CAN_TX, CAN_RX);
+    ESP32Can.setRxQueueSize(1);
+    ESP32Can.setTxQueueSize(1);
+    ESP32Can.setSpeed(ESP32Can.convertSpeed(1000));
 
     if (ESP32Can.begin()) {
         Serial.println("Bus CAN démarré !");
@@ -56,223 +51,66 @@ void setup() {
     }
 }
 
-
-
-// Cette fonction communique avec le MCP3221 via le protocole I2C pour lire deux octets de données (MSB et LSB),
-// les convertit en une valeur de tension et les retourne en double. Elle prend en compte un paramètre pour décider d'imprimer les informations ou non.
-
 double lireMCP3221(int adresseMCP3221, int printInfo) {
     Wire.beginTransmission(adresseMCP3221);
     Wire.endTransmission();
-
-    delayMicroseconds(150); // Pause avant de lire les données du MCP3221
-
-    Wire.requestFrom(adresseMCP3221, 2); // Lecture de 2 octets de données
-    byte octetMSB = Wire.read();          // Octet MSB, premier octet de données
-    byte octetLSB = Wire.read();          // Octet LSB, deuxième octet de données
-
+    delayMicroseconds(150);
+    Wire.requestFrom(adresseMCP3221, 2);
+    byte octetMSB = Wire.read();
+    byte octetLSB = Wire.read();
     if (printInfo) {
         printINFO(octetMSB, octetLSB);
     }
-
     return convertDbyte_Double(octetMSB, octetLSB);
 }
 
-
-
-//Convertit deux octets en une valeur double en tenant compte de la référence de tension et de la résolution ADC.
-
 double convertDbyte_Double(byte msb, byte lsb) {
-  int value = ((msb & 0x0F) << 8) | lsb; // Combinaison de l'octet MSB et de l'octet LSB en une valeur entière sur 12 bits.
-
-  double v = (double)value * vRef / 4096.0; // Conversion de la valeur entière en tension en volts en utilisant la référence de tension et la résolution ADC.
-
-  return v; // Retourne la valeur convertie en volts.
+    int value = ((msb & 0x0F) << 8) | lsb;
+    return (double)value * vRef / 4095.0;
 }
 
-
-// Imprime les informations sur la valeur ADC et la tension correspondante en mV.
-
 int printINFO(byte msb, byte lsb) {
+    int valeurADC = ((msb & 0x0F) << 8) | lsb;
     Serial.print("Valeur ADC (12 bits) = ");
-
-    int valeurADC = ((msb & 0x0F) << 8) | lsb; // Conversion de l'octet MSB et de l'octet LSB en une valeur ADC sur 12 bits
     Serial.print(valeurADC);
     Serial.println();
-
-    double tension_mV = convertDbyte_Double(msb, lsb) * 1000; // Conversion de la tension en mV
+    double tension_mV = convertDbyte_Double(msb, lsb) * 1000;
     Serial.print("Tension (mV) = ");
     Serial.println(tension_mV);
-
     return valeurADC;
 }
 
-// Fonction pour recuperer les valeurADC pour l'affichage dans le terminal
-// Fonction temporaire
-int valeurADC_12(byte msb, byte lsb) {
-    int valeur_ADC = ((msb & 0x0F) << 8) | lsb; // Conversion de l'octet MSB et de l'octet LSB en une valeur ADC sur 12 bits
-    return valeur_ADC;
-}
-
-
-//Fonction qui configure le message CAN a envoyer
-
-void sendPotentiometerValue(int potValue, int valeurADC, int decimalID) {
-
-    // Configurer le message CAN
+void sendPotentiometerValue(double volts) {
     CanFrame potFrame = { 0 };
-    potFrame.identifier = decimalID; // Utiliser l'ID décimal correspondant
-    potFrame.extd = 0; // 0 pour une trame standard (11 bits) et 1 pour une trame étendue (29 bits)
+    potFrame.identifier = DECIMAL_ID;
+    potFrame.extd = 0;
     potFrame.data_length_code = 8;
-    //potFrame.rtr = 0; //inutilisable dans notre cas
     
-    // Remplir le reste des octets de données avec des zéros
-    for (int i = 0; i < 4; i++) {
-        potFrame.data[i] = '0';
+    unsigned char canVolts = (int)volts;
+    unsigned char canCentiVolts = (int)((volts - canVolts) * 100);
+
+    potFrame.data[0] = canVolts;
+    potFrame.data[1] = canCentiVolts;
+
+    for (int i = 2; i < 8; i++) {
+        potFrame.data[i] = 0; // remplir les autres octets de données avec des zéros
     }
 
-    // Convertir les entiers en caractères ASCII
-    char digit1 = '0' + (potValue / 1000) % 10;  // Milliers
-    char digit2 = '0' + (potValue / 100) % 10; // Centaines
-    char digit3 = '0' + (potValue / 10) % 10; // Dizaines
-    char digit4 = '0' + potValue % 10; // Unités
-
-    // Assigner chaque caractère à l'octet de données correspondant dans potFrame
-    potFrame.data[4] = digit1; //0
-    potFrame.data[5] = digit2; //0
-    potFrame.data[6] = digit3; //0
-    potFrame.data[7] = digit4; //0
-
-    // Afficher les informations sur le message CAN avant l'envoi
     Serial.print("Envoi de trame CAN avec ID: ");
     Serial.println(potFrame.identifier);
-
     Serial.print("Données: ");
     for (int i = 0; i < 8; i++) {
-        Serial.print((char)potFrame.data[i]); // Afficher chaque octet comme un caractère
+        Serial.print((int)potFrame.data[i]);  // Afficher chaque octet comme un nombre entier
         Serial.print(" ");
     }
     Serial.println();
-    Serial.print("valeur du potentiomètre ");
-    Serial.println(potValue);
 
-    // Envoyer le message CAN
     ESP32Can.writeFrame(potFrame);
-
-}
-
-// Retourne le ID (en décimal) correspondant pour chaque type de capteurs
-// Fonction qui va etre enlevé, c'est à l'autre équipe de se charger de l'ID
-
-int getDecimalID(int hexID) {
-    int decimalID = -1; // Initialiser à -1 pour gérer les ID non répertoriés
-
-    switch (hexID) {
-        case 0xA0:
-            decimalID = 528; //Temperature Set 1
-            break;
-        case 0xA1:
-            decimalID = 529; //Temperature Set 2
-            break;
-        case 0xA2:
-            decimalID = 530; //Temperature Set 3
-            break;
-        case 0xA3:
-            decimalID = 531; //Analog input Voltages
-            break;
-        case 0xA4:
-            decimalID = 532; //Digital input status
-            break;
-        case 0xA5:
-            decimalID = 533; //Motor position info
-            break;
-        case 0xA6:
-            decimalID = 534; //Current Info
-            break;
-        case 0xA7:
-            decimalID = 535;  //Voltage info
-            break;
-        case 0xA8:
-            decimalID = 536; //Flux ID IQ info
-            break;
-        case 0xA9:
-            decimalID = 537;  //Internal Voltages
-            break;
-        case 0xAA:
-            decimalID = 538;  //Internal states
-            break;
-        case 0xAB:
-            decimalID = 539;  //Fault Codes
-            break;
-        case 0xAC:
-            decimalID = 540;  //Torque and Timer info
-            break;
-        case 0xAD:
-            decimalID = 541; //Modulation and Flux info
-            break;
-        case 0xAE:
-            decimalID = 542;  //Firmware info
-            break;
-        case 0xAF:
-            decimalID = 543; //Diag Data
-            break;
-        case 0xB0:
-            decimalID = 544; //Fast info
-            break;
-        case 0xBB:
-            decimalID = 545; //U2C Command Txd
-            break;
-        case 0xBC:
-            decimalID = 546; //U2C Command Rxd
-            break;
-        case 0xC0:
-            decimalID = 547; //Command Message
-            break;
-        case 0xC1:
-            decimalID = 548; //Read Write Param Command
-            break;
-        case 0xC2:
-            decimalID = 549; //Read Write Param Response
-            break;
-        case 0x1D5:
-            decimalID = 550;  //U2C_Message_Rxd
-            break;
-        case 0x1D7:
-            decimalID = 551;  //U2C_Command_Txd
-            break;
-        case 0x202:
-            decimalID = 552; //BMS Current Limit
-            break;
-    }
-
-    return decimalID;
 }
 
 
 void loop() {
-
-    // Mesurer et afficher les valeurs des canaux
     double valeurCanal = lireMCP3221(adresseCAN, printInfosSerie);
-
-    // Récupérer les valeurs MSB et LSB en appelant lireMCP3221
-    byte msb, lsb;
-    Wire.beginTransmission(adresseCAN);
-    Wire.endTransmission();
-    delayMicroseconds(150);
-    Wire.requestFrom(adresseCAN, 2);
-    msb = Wire.read();
-    lsb = Wire.read();
-
-    // Appel de la fonction valeurADC_12 avec les octets MSB et LSB
-    int v = valeurADC_12(msb, lsb);
-    int value = printINFO(msb, lsb);
-
-    int hexID = 0x202; // ID hexadécimal pour BMS Current Limit
-    int decimalID = getDecimalID(hexID); // Obtenir l'ID décimal correspondant
-
-    delay(50); // 50 ms avant la prochaine mesure
-    
-    
-    sendPotentiometerValue(value, v, decimalID);  // Envoyer la valeur via CAN avec l'ID correspondant
-
+    sendPotentiometerValue(valeurCanal);
+    delay(500);
 }
