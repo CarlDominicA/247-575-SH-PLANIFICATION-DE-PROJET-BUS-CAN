@@ -8,6 +8,12 @@
 
 //  Matériel: Esp32-C3 XIAO SEED, MCP3221, TJA1050, Potentiometre
 
+//  Pour complier hors extension Plateformio: 
+//  - cd C:\Users\mmanz\Documents\PlatformIO\Projects\Esp32Arduino
+//  - platformio run
+//  - platformio run --target upload
+//  -platformio device monitor
+
 
 // Inclusion des bibliothèques nécessaires
 #include "DecimalID.h"  // Fichier pour l'identification décimale dans les messages CAN
@@ -21,10 +27,11 @@
 #define CAN_RX GPIO_NUM_20
 
 // Variables globales
-unsigned long dernierTemps = 0;    // Stocke le dernier temps enregistré
+//unsigned long dernierTemps = 0;    // Stocke le dernier temps enregistré
 const byte adresseCAN = 0x4D;      // Adresse I2C du MCP3221 sur le bus
 const double vRef = 5.0;           // Référence de tension pour le calcul de la tension réelle
-const int printInfosSerie = 1;     // Contrôle l'affichage des informations sur le port série
+const int activerSortieSerie = 1;     // Contrôle l'affichage des informations sur le port série
+int valeurADC;
 
 // Prototypes de fonction
 double lireMCP3221(int adresseMCP3221, int printInfo);
@@ -40,7 +47,7 @@ void setup() {
 
     Wire.begin(GPIO_NUM_6, GPIO_NUM_7); // initialise le bus I2C
     Serial.begin(115200); // Démarrer la communication série à 115200 bauds
-    dernierTemps = millis(); // Enregistrer le temps actuel
+    //dernierTemps = millis(); // Enregistrer le temps actuel
 
     // Configuration du bus CAN
     ESP32Can.setPins(CAN_TX, CAN_RX); // Définit les broches pour le CAN GPIO 21/GPIO 20
@@ -96,15 +103,15 @@ double lireMCP3221(int adresseMCP3221, int printInfo) {
  */
 
 double convertDbyte_Double(byte msb, byte lsb) {
-    int valeurADC_12bits = ((msb & 0x0F) << 8) | lsb;   //  Déclaration variable valeur12bits qui va contenir la valeur numérique calculée sur 12 bits.
-                                                    //  Extrait les 4 bits bas du MSB, les décale de 8 bits à gauche, puis combine avec le LSB pour donner la valeurADC sur 12 bits
+    valeurADC = ((msb & 0x0F) << 8) | lsb;   //  Déclaration variable valeur12bits qui va contenir la valeur numérique calculée sur 12 bits.
+                                                        //  Extrait les 4 bits bas du MSB, les décale de 8 bits à gauche, puis combine avec le LSB pour donner la valeurADC sur 12 bits
 
     return (double)valeurADC_12bits * vRef / 4095.0;    //  Convertit la valeur sur 12 bits en tension réelle en utilisant la référence de tension de l'ADC (5v), puis retourne cette valeur.
-                                                    //  Volt = (AN * 5) / 4095
+                                                        //  Volt = (AN * 5) / 4095
 }
 
 /**
- * @brief Affiche les informations de diagnostic concernant la valeur ADC et la tension calculée.
+ * @brief Affiche les informations concernant la valeur ADC et la tension calculée.
  * 
  * Cette fonction calcule la valeur ADC à partir des octets MSB et LSB, convertit cette valeur en tension,
  * puis imprime les valeurs ADC et la tension en millivolts sur le port série pour le diagnostic.
@@ -116,7 +123,7 @@ double convertDbyte_Double(byte msb, byte lsb) {
  */
 
 int affichage(byte msb, byte lsb) {
-    int valeurADC = ((msb & 0x0F) << 8) | lsb; // Calculer la valeur ADC
+    //int valeurADC = ((msb & 0x0F) << 8) | lsb; // Calculer la valeur ADC
     Serial.print("Valeur ADC (12 bits) = ");
     Serial.print(valeurADC);
     Serial.println();
@@ -139,43 +146,43 @@ int affichage(byte msb, byte lsb) {
  */
 
 void trame_CAN(double volts) {
-    CanFrame potFrame = { 0 };
-    potFrame.identifier = DECIMAL_ID; // Utilise l'identifiant décimal défini pour la trame CAN
-    potFrame.extd = 0; // Indique que c'est une trame standard (non étendue)
-    potFrame.data_length_code = 8; // Taille de données fixée à 8 octets
+    CanFrame trame = { 0 };
+    trame.identifier = DECIMAL_ID; // Utilise l'identifiant décimal défini pour la trame CAN
+    trame.extd = 0; // Indique que c'est une trame standard (non étendue)
+    trame.data_length_code = 8; // Taille de données fixée à 8 octets
     
     // Convertir la tension en volts entiers et en centièmes de volts
     unsigned char canVolts = (int)volts; // Partie entière des volts
     unsigned char canCentiVolts = (int)((volts - canVolts) * 100); // Calcul des centièmes de volts
 
-    potFrame.data[0] = canVolts; // Stocker les volts entiers dans le premier octet
-    potFrame.data[1] = canCentiVolts; // Stocker les centièmes de volts dans le deuxième octet
+    trame.data[0] = canVolts; // Stocker les volts entiers dans le premier octet
+    trame.data[1] = canCentiVolts; // Stocker les centièmes de volts dans le deuxième octet
 
     // Initialiser les octets restants à zéro
     for (int i = 2; i < 8; i++) {
-        potFrame.data[i] = 0; // Mettre à zéro les autres octets
+        trame.data[i] = 0; // Mettre à zéro les autres octets
     }
 
     // Afficher les informations sur la trame CAN à envoyer
     Serial.print("Envoi de trame CAN avec ID: ");
-    Serial.println(potFrame.identifier);
-    Serial.print("Données: ");
+    Serial.println(trame.identifier);
+    Serial.print("trame CAN: ");
     for (int i = 0; i < 8; i++) {
-        Serial.print((int)potFrame.data[i]);  // Afficher chaque octet sous forme de nombre entier
+        Serial.print((int)trame.data[i]);  // Afficher chaque octet sous forme de nombre entier
         Serial.print(" ");
     }
     Serial.println();
 
     // Envoyer la trame sur le bus CAN
-    ESP32Can.writeFrame(potFrame);
+    ESP32Can.writeFrame(trame);
 }
 
 
 // Boucle principale du programme
 void loop() {
-    double LectureMCP3221 = lireMCP3221(adresseCAN, printInfosSerie);   // stocke La valeur de tension en volts dans la vairable LectureMCP,
-                                                                        // prend en oarametre l'adresse I2C du MCP3221
+    double LectureMCP3221 = lireMCP3221(adresseCAN, activerSortieSerie);   // stocke La valeur de tension en volts dans la vairable LectureMCP,
+                                                                           // prend en oarametre l'adresse I2C du MCP3221
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    delay(50); // Attendre un demi-seconde
+    //delay(50); // Attendre 50 ms
 }
