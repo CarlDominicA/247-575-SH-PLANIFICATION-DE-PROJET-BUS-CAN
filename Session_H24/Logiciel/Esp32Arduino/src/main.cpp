@@ -1,4 +1,4 @@
-//  Brief: Ce code est conçu pour un microcontrôleur Esp32-C3 XIAO SEED, utilisant le langage ARDUINO et les bibliothèques Wire pour la communication I2C et ESP32-TWAI-CAN pour la 
+//  Brief: Ce code est conçu pour un microcontrôleur Esp32-C3 XIAO SEED, utilisant le langage C++ et les bibliothèques Wire pour la communication I2C et ESP32-TWAI-CAN pour la 
 //  communication CAN. L'objectif principal est la lecture d'une valeur analogique à partir d'un convertisseur analogique-numérique (CAN) 
 //  MCP3221 et l'envoi de cette valeur sur le bus CAN.
 
@@ -8,6 +8,11 @@
 
 //  Matériel: Esp32-C3 XIAO SEED, MCP3221, TJA1050, Potentiometre
 
+
+//  Pour complier hors extension Plateformio: 
+//  - cd C:\Users\mmanz\Desktop\Projet_Module_CAN\Session_H24\Logiciel\Esp32Arduino
+//  - platformio run --target upload
+//  -platformio device monitor
 
 // Inclusion des bibliothèques nécessaires
 #include "DecimalID.h"  // Fichier pour l'identification décimale dans les messages CAN
@@ -117,7 +122,7 @@ double convertir_Byte_en_Double(byte msb, byte lsb) {
 
 int affichage(byte msb, byte lsb) {
     int valeurADC_affichage = ((msb & 0x0F) << 8) | lsb; // Calculer la valeur ADC
-    Serial.print("Valeur ADC (12 bits) = ");
+    Serial.print("                         Valeur ADC (12 bits) = ");
     Serial.print(valeurADC_affichage);
     Serial.println();
     double tension_mV = convertir_Byte_en_Double(msb, lsb) * 1000; // Convertir en millivolts
@@ -157,7 +162,7 @@ void trame_CAN(double volts) {
     }
 
     // Afficher les informations sur la trame CAN à envoyer
-    Serial.print("Envoi de trame CAN avec ID: ");
+    Serial.print("                         Envoi de trame CAN avec ID: ");
     Serial.println(trame.identifier);
     Serial.print("trame CAN: ");
     for (int i = 0; i < 8; i++) {
