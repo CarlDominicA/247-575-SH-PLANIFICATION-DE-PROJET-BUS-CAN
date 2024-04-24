@@ -1,18 +1,12 @@
-//  Brief: Ce code est conçu pour un microcontrôleur esp32-c3-devkitc-02, utilisant le langage ARDUINO et les bibliothèques Wire pour la communication I2C et ESP32-TWAI-CAN pour la 
+//  Brief: Ce code est conçu pour un microcontrôleur Esp32-C3 XIAO SEED, utilisant le langage ARDUINO et les bibliothèques Wire pour la communication I2C et ESP32-TWAI-CAN pour la 
 //  communication CAN. L'objectif principal est la lecture d'une valeur analogique à partir d'un convertisseur analogique-numérique (CAN) 
 //  MCP3221 et l'envoi de cette valeur sur le bus CAN.
 
 //  Auteur: Mamoune Benmensour & Carl-Dominic Aubin
 
-//  Date: 22 Avril 2024
+//  Date: 24 Avril 2024
 
 //  Matériel: Esp32-C3 XIAO SEED, MCP3221, TJA1050, Potentiometre
-
-//  Pour complier hors extension Plateformio: 
-//  - cd C:\Users\mmanz\Documents\PlatformIO\Projects\Esp32Arduino
-//  - platformio run
-//  - platformio run --target upload
-//  -platformio device monitor
 
 
 // Inclusion des bibliothèques nécessaires
@@ -30,12 +24,11 @@
 //unsigned long dernierTemps = 0;    // Stocke le dernier temps enregistré
 const byte adresseCAN = 0x4D;      // Adresse I2C du MCP3221 sur le bus
 const double vRef = 5.0;           // Référence de tension pour le calcul de la tension réelle
-const int activerSortieSerie = 1;     // Contrôle l'affichage des informations sur le port série
-int valeurADC;
+const int activer_Affichage = 1;     // Contrôle l'affichage des informations sur le port série
 
 // Prototypes de fonction
 double lireMCP3221(int adresseMCP3221, int printInfo);
-double convertDbyte_Double(byte msb, byte lsb);
+double convertir_Byte_en_Double(byte msb, byte lsb);
 int affichage(byte msb, byte lsb);
 void trame_CAN(double volts);
 int getDecimalID(int hexID);
@@ -45,7 +38,7 @@ void setup() {
     pinMode(GPIO_NUM_2, OUTPUT);    //Met le GPIO en sortie
     digitalWrite(GPIO_NUM_2, HIGH); // Mettre la broche GPIO en état haut
 
-    Wire.begin(GPIO_NUM_6, GPIO_NUM_7); // initialise le bus I2C
+    Wire.begin(GPIO_NUM_6, GPIO_NUM_7); // initialise le bus I2C SDA 6/ SCL 7
     Serial.begin(115200); // Démarrer la communication série à 115200 bauds
     //dernierTemps = millis(); // Enregistrer le temps actuel
 
@@ -70,7 +63,7 @@ void setup() {
  * les convertit en tension
  * 
  * @param adresseMCP3221 L'adresse I2C du MCP3221 
- * @param printInfo Contrôle l'affichage des informations de diagnostic sur le port série.
+ * @param printInfo Contrôle l'affichage des informations sur le port série.
  * 
  * @return La valeur de tension en volts calculée à partir des données brutes lues.
  */
@@ -85,7 +78,7 @@ double lireMCP3221(int adresseMCP3221, int printInfo) {
     if (printInfo) {
         affichage(octetMSB, octetLSB); // appel fonction pour l'affichage
     }
-    return convertDbyte_Double(octetMSB, octetLSB); // retourne tension en volts
+    return convertir_Byte_en_Double(octetMSB, octetLSB); // retourne tension en volts
 }
 
 
@@ -102,8 +95,8 @@ double lireMCP3221(int adresseMCP3221, int printInfo) {
  * @return La valeur de tension en volts.
  */
 
-double convertDbyte_Double(byte msb, byte lsb) {
-    valeurADC = ((msb & 0x0F) << 8) | lsb;   //  Déclaration variable valeur12bits qui va contenir la valeur numérique calculée sur 12 bits.
+double convertir_Byte_en_Double(byte msb, byte lsb) {
+    int valeurADC_12bits = ((msb & 0x0F) << 8) | lsb;   //  Déclaration variable valeur12bits qui va contenir la valeur numérique calculée sur 12 bits.
                                                         //  Extrait les 4 bits bas du MSB, les décale de 8 bits à gauche, puis combine avec le LSB pour donner la valeurADC sur 12 bits
 
     return (double)valeurADC_12bits * vRef / 4095.0;    //  Convertit la valeur sur 12 bits en tension réelle en utilisant la référence de tension de l'ADC (5v), puis retourne cette valeur.
@@ -123,14 +116,14 @@ double convertDbyte_Double(byte msb, byte lsb) {
  */
 
 int affichage(byte msb, byte lsb) {
-    //int valeurADC = ((msb & 0x0F) << 8) | lsb; // Calculer la valeur ADC
+    int valeurADC_affichage = ((msb & 0x0F) << 8) | lsb; // Calculer la valeur ADC
     Serial.print("Valeur ADC (12 bits) = ");
-    Serial.print(valeurADC);
+    Serial.print(valeurADC_affichage);
     Serial.println();
-    double tension_mV = convertDbyte_Double(msb, lsb) * 1000; // Convertir en millivolts
+    double tension_mV = convertir_Byte_en_Double(msb, lsb) * 1000; // Convertir en millivolts
     Serial.print("Tension (mV) = ");
     Serial.println(tension_mV);
-    return valeurADC;
+    return valeurADC_affichage;
 }
 
 /**
@@ -147,7 +140,7 @@ int affichage(byte msb, byte lsb) {
 
 void trame_CAN(double volts) {
     CanFrame trame = { 0 };
-    trame.identifier = DECIMAL_ID; // Utilise l'identifiant décimal défini pour la trame CAN
+    trame.identifier = DECIMAL_ID; // Utilise l'ID défini pour la trame CAN
     trame.extd = 0; // Indique que c'est une trame standard (non étendue)
     trame.data_length_code = 8; // Taille de données fixée à 8 octets
     
@@ -180,9 +173,9 @@ void trame_CAN(double volts) {
 
 // Boucle principale du programme
 void loop() {
-    double LectureMCP3221 = lireMCP3221(adresseCAN, activerSortieSerie);   // stocke La valeur de tension en volts dans la vairable LectureMCP,
-                                                                           // prend en oarametre l'adresse I2C du MCP3221
+    double LectureMCP3221 = lireMCP3221(adresseCAN, activer_Affichage);   // stocke La valeur de tension en volts dans la vairable LectureMCP,
+                                                                          // prend en parametre l'adresse I2C du MCP3221
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    //delay(50); // Attendre 50 ms
+    delay(500); // Attendre 50 ms
 }
