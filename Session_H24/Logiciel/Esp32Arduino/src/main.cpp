@@ -33,7 +33,6 @@ const int activer_Affichage = 1;     // Contrôle l'affichage des informations s
 
 // Prototypes de fonction
 double lireMCP3221(int adresseMCP3221, int printInfo);
-double convertir_Byte_en_Double(byte msb, byte lsb);
 int affichage(byte msb, byte lsb);
 void trame_CAN(double volts);
 int getDecimalID(int hexID);
@@ -61,75 +60,44 @@ void setup() {
     }
 }
 
+
+
 /**
- * @brief Lit les données analogiques depuis le MCP3221 via I2C et convertit ces données en valeur de tension.
+ * @brief Lit les données analogiques depuis le MCP3221 via I2C et convertit ces données en tension.
  * 
- * Cette fonction initie une communication I2C avec le MCP3221 à l'adresse spécifiée, lit les octets de données (MSB et LSB),
- * les convertit en tension
+ * Cette fonction établit une communication I2C avec le MCP3221 à l'adresse spécifiée, lit deux octets représentant la mesure analogique,
+ * calcule la valeur ADC correspondante, et la convertit en tension en volts et affiche les résultats sur le port série.
  * 
- * @param adresseMCP3221 L'adresse I2C du MCP3221 
- * @param printInfo Contrôle l'affichage des informations sur le port série.
+ * @param adresseMCP3221 L'adresse I2C du MCP3221.
+ * @param printInfo Contrôle l'affichage des informations sur le port série (1 pour activer, 0 pour désactiver).
  * 
  * @return La valeur de tension en volts calculée à partir des données brutes lues.
  */
 
 double lireMCP3221(int adresseMCP3221, int printInfo) {
-    Wire.beginTransmission(adresseMCP3221);
-    Wire.endTransmission();
-    delayMicroseconds(150); // Petit délai pour la stabilité
-    Wire.requestFrom(adresseMCP3221, 2); // Demander 2 octets depuis le MCP3221
-    byte octetMSB = Wire.read(); // Lire l'octet de poids fort
-    byte octetLSB = Wire.read(); // Lire l'octet de poids faible
+    Wire.beginTransmission(adresseMCP3221);  // Commence la transmission I2C à l'adresse spécifiée.
+    Wire.endTransmission();                  // Termine la transmission I2C.
+    delayMicroseconds(150);                  // Attente courte pour stabiliser la communication I2C.
+
+    Wire.requestFrom(adresseMCP3221, 2);     // Demande de lecture de 2 octets depuis le MCP3221.
+    byte octetMSB = Wire.read();             // Lecture de l'octet de poids fort.
+    byte octetLSB = Wire.read();             // Lecture de l'octet de poids faible.
+
+    int valeurADC_12bits = ((octetMSB & 0x0F) << 8) | octetLSB;  // Combine les octets lus en une valeur ADC de 12 bits.
+    double tensionVolts = valeurADC_12bits * vRef / 4095.0;       // Convertit la valeur ADC en tension en utilisant la référence de tension de l'ADC.
+
     if (printInfo) {
-        affichage(octetMSB, octetLSB); // appel fonction pour l'affichage
+        double tension_mV = tensionVolts * 1000;           // Conversion de la tension en millivolts pour l'affichage.
+        Serial.print("                                      Valeur ADC (12 bits) = ");           // Affiche la valeur ADC sur le port série.
+        Serial.print(valeurADC_12bits);
+        Serial.println();
+        Serial.print("Tension (mV) = ");                   // Affiche la tension en millivolts sur le port série.
+        Serial.println(tension_mV);
     }
-    return convertir_Byte_en_Double(octetMSB, octetLSB); // retourne tension en volts
+    
+    return tensionVolts;  // Retourne la tension calculée en volts.
 }
 
-
-
-/**
- * @brief Convertit les octets de données en valeur de tension double.
- * 
- * Prend les octets MSB et LSB lus depuis le MCP3221, les combine pour former une valeur sur 12 bits,
- * puis convertit cette valeur en tension réelle en utilisant la référence de tension et la résolution de l'ADC.
- * 
- * @param msb Octet de poids fort reçu du MCP3221.
- * @param lsb Octet de poids faible reçu du MCP3221.
- * 
- * @return La valeur de tension en volts.
- */
-
-double convertir_Byte_en_Double(byte msb, byte lsb) {
-    int valeurADC_12bits = ((msb & 0x0F) << 8) | lsb;   //  Déclaration variable valeur12bits qui va contenir la valeur numérique calculée sur 12 bits.
-                                                        //  Extrait les 4 bits bas du MSB, les décale de 8 bits à gauche, puis combine avec le LSB pour donner la valeurADC sur 12 bits
-
-    return (double)valeurADC_12bits * vRef / 4095.0;    //  Convertit la valeur sur 12 bits en tension réelle en utilisant la référence de tension de l'ADC (5v), puis retourne cette valeur.
-                                                        //  Volt = (AN * 5) / 4095
-}
-
-/**
- * @brief Affiche les informations concernant la valeur ADC et la tension calculée.
- * 
- * Cette fonction calcule la valeur ADC à partir des octets MSB et LSB, convertit cette valeur en tension,
- * puis imprime les valeurs ADC et la tension en millivolts sur le port série pour le diagnostic.
- * 
- * @param msb Octet de poids fort indiquant la partie haute de la valeur ADC.
- * @param lsb Octet de poids faible indiquant la partie basse de la valeur ADC.
- * 
- * @return La valeur ADC sur 12 bits calculée à partir des octets MSB et LSB.
- */
-
-int affichage(byte msb, byte lsb) {
-    int valeurADC_affichage = ((msb & 0x0F) << 8) | lsb; // Calculer la valeur ADC
-    Serial.print("                         Valeur ADC (12 bits) = ");
-    Serial.print(valeurADC_affichage);
-    Serial.println();
-    double tension_mV = convertir_Byte_en_Double(msb, lsb) * 1000; // Convertir en millivolts
-    Serial.print("Tension (mV) = ");
-    Serial.println(tension_mV);
-    return valeurADC_affichage;
-}
 
 /**
  * @brief Envoie la valeur de tension mesurée sur le bus CAN.
@@ -162,7 +130,7 @@ void trame_CAN(double volts) {
     }
 
     // Afficher les informations sur la trame CAN à envoyer
-    Serial.print("                         Envoi de trame CAN avec ID: ");
+    Serial.print("                                      Envoi de trame CAN avec ID: ");
     Serial.println(trame.identifier);
     Serial.print("trame CAN: ");
     for (int i = 0; i < 8; i++) {
@@ -182,5 +150,5 @@ void loop() {
                                                                           // prend en parametre l'adresse I2C du MCP3221
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    delay(500); // Attendre 50 ms
+    delay(50); // Attendre 50 ms
 }
