@@ -33,9 +33,7 @@ const int activer_Affichage = 1;     // Contrôle l'affichage des informations s
 
 // Prototypes de fonction
 double lireMCP3221(int adresseMCP3221, int printInfo);
-int affichage(byte msb, byte lsb);
 void trame_CAN(double volts);
-int getDecimalID(int hexID);
 
 // Configuration initiale
 void setup() {
