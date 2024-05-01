@@ -86,7 +86,7 @@ double lireMCP3221(int adresseMCP3221, int printInfo) {
 
     if (printInfo) {
         double tension_mV = tensionVolts * 1000;           // Conversion de la tension en millivolts pour l'affichage.
-        Serial.print("                                      Valeur ADC (12 bits) = ");           // Affiche la valeur ADC sur le port série.
+        Serial.print("                   mam                   Valeur ADC (12 bits) = ");           // Affiche la valeur ADC sur le port série.
         Serial.print(valeurADC_12bits);
         Serial.println();
         Serial.print("Tension (mV) = ");                   // Affiche la tension en millivolts sur le port série.
@@ -148,5 +148,5 @@ void loop() {
                                                                           // prend en parametre l'adresse I2C du MCP3221
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    delay(50); // Attendre 50 ms
+    delay(20); // Attendre 50 ms
 }
