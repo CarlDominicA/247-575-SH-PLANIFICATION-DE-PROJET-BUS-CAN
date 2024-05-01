@@ -34,6 +34,7 @@ const int activer_Affichage = 1;     // Contrôle l'affichage des informations s
 // Prototypes de fonction
 double lireMCP3221(int adresseMCP3221, int printInfo);
 void trame_CAN(double volts);
+void trame_CAN_2(double volts);
 
 // Configuration initiale
 void setup() {
@@ -86,7 +87,7 @@ double lireMCP3221(int adresseMCP3221, int printInfo) {
 
     if (printInfo) {
         double tension_mV = tensionVolts * 1000;           // Conversion de la tension en millivolts pour l'affichage.
-        Serial.print("                   mam                   Valeur ADC (12 bits) = ");           // Affiche la valeur ADC sur le port série.
+        Serial.print("                                      Valeur ADC (12 bits) = ");           // Affiche la valeur ADC sur le port série.
         Serial.print(valeurADC_12bits);
         Serial.println();
         Serial.print("Tension (mV) = ");                   // Affiche la tension en millivolts sur le port série.
@@ -141,6 +142,49 @@ void trame_CAN(double volts) {
     ESP32Can.writeFrame(trame);
 }
 
+/**
+ * @brief Envoie la valeur de tension mesurée sur le bus CAN.
+ * 
+ * Cette fonction prépare une trame CAN en convertissant la valeur de tension en volts en deux composants:
+ * les volts entiers et les centièmes de volt. Elle place ces valeurs dans les deux premiers octets d'une trame CAN,
+ * met les autres octets à zéro pour le padding, et envoie cette trame sur le bus CAN.
+ * 
+ * @param volts La tension mesurée en volts à envoyer sur le bus CAN.
+ * 
+ * @return void Cette fonction ne retourne rien.
+ */
+
+void trame_CAN_2(double volts1) {
+    CanFrame trame1 = { 0 };
+    trame1.identifier = 540; // Utilise l'ID défini pour la trame CAN
+    trame1.extd = 0; // Indique que c'est une trame standard (non étendue)
+    trame1.data_length_code = 8; // Taille de données fixée à 8 octets
+    
+    // Convertir la tension en volts entiers et en centièmes de volts
+    unsigned char canVolts1 = (int)volts1; // Partie entière des volts
+    unsigned char canCentiVolts1 = (int)((volts1 - canVolts1) * 100); // Calcul des centièmes de volts
+
+    trame1.data[0] = canCentiVolts1; // Stocker les centièmes de volts dans le deuxième octet
+    trame1.data[1] = canVolts1; // Stocker les volts entiers dans le premier octet
+
+    // Initialiser les octets restants à zéro
+    for (int i = 2; i < 8; i++) {
+        trame1.data[i] = 0; // Mettre à zéro les autres octets
+    }
+
+    // Afficher les informations sur la trame CAN à envoyer
+    Serial.print("                                      Envoi de trame 2 CAN avec ID: ");
+    Serial.println(trame1.identifier);
+    Serial.print("trame CAN 2: ");
+    for (int i = 0; i < 8; i++) {
+        Serial.print((int)trame1.data[i]);  // Afficher chaque octet sous forme de nombre entier
+        Serial.print(" ");
+    }
+    Serial.println();
+
+    // Envoyer la trame sur le bus CAN
+    ESP32Can.writeFrame(trame1);
+}
 
 // Boucle principale du programme
 void loop() {
@@ -148,5 +192,7 @@ void loop() {
                                                                           // prend en parametre l'adresse I2C du MCP3221
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    delay(20); // Attendre 50 ms
+    delay(10);
+    trame_CAN_2(LectureMCP3221);
+    //delay(250); // Attendre 50 ms
 }
