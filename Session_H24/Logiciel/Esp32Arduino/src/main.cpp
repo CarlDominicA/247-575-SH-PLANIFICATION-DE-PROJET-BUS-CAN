@@ -192,7 +192,7 @@ void loop() {
                                                                           // prend en parametre l'adresse I2C du MCP3221
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    delay(10);
+    //delay(10);
     //trame_CAN_2(LectureMCP3221);
-    //delay(250); // Attendre 50 ms
+    //delay(50); // Attendre 50 ms
 }
