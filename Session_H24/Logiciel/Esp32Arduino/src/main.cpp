@@ -154,7 +154,7 @@ void trame_CAN(double volts) {
  * @return void Cette fonction ne retourne rien.
  */
 
-void trame_CAN_2(double volts1) {
+/*void trame_CAN_2(double volts1) {
     CanFrame trame1 = { 0 };
     trame1.identifier = 540; // Utilise l'ID défini pour la trame CAN
     trame1.extd = 0; // Indique que c'est une trame standard (non étendue)
@@ -184,7 +184,7 @@ void trame_CAN_2(double volts1) {
 
     // Envoyer la trame sur le bus CAN
     ESP32Can.writeFrame(trame1);
-}
+}*/
 
 // Boucle principale du programme
 void loop() {
@@ -193,6 +193,6 @@ void loop() {
 
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
     delay(10);
-    trame_CAN_2(LectureMCP3221);
+    //trame_CAN_2(LectureMCP3221);
     //delay(250); // Attendre 50 ms
 }
