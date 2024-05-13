@@ -1,3 +1,6 @@
+
+// NB: CODE NE SERVANT A PLUS RIEN
+
 //  Brief: code fonctionnement MCP3221, ce code est conçu pour un microcontrôleur esp32-c3-devkitc-02, utilisant le langage ARDUINO et les bibliothèques 
 //  Wire pour la communication I2C. L'objectif principal est la lecture d'une valeur analogique à partir d'un convertisseur analogique-numérique (CAN) 
 //  MCP3221

@@ -1,3 +1,5 @@
+# CE CODE N'EST PLUS UTILISABLE 
+
 # Projet de Lecture Analogique avec MCP3221 et ESP32-C3
 
 ## Description
