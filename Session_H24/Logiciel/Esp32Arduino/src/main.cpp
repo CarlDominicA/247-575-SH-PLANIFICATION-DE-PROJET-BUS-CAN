@@ -8,17 +8,10 @@
 
 //  Matériel: Esp32-C3 XIAO SEED, MCP3221, TJA1050, Potentiometre
 
-
-//  Pour complier hors extension Plateformio: 
-//  - cd C:\Users\mmanz\Desktop\Projet_Module_CAN\Session_H24\Logiciel\Esp32Arduino
-//  - platformio run --target upload
-//  -platformio device monitor
-
 // Inclusion des bibliothèques nécessaires
 #include "DecimalID.h"  // Fichier pour l'identification décimale dans les messages CAN
 #include <Arduino.h>    // Bibliothèque principale pour Arduino
 #include <Wire.h>       // Bibliothèque pour la communication I2C
-#include "MCP3X21.h"    // Bibliothèque pour le capteur ADC MCP3221
 #include <ESP32-TWAI-CAN.hpp> // Bibliothèque pour utiliser le protocole CAN avec un ESP32
 
 // Définition des broches pour la transmission CAN
@@ -37,8 +30,6 @@ void trame_CAN(double volts);
 
 // Configuration initiale
 void setup() {
-    //pinMode(GPIO_NUM_2, OUTPUT);    //Met le GPIO en sortie
-   // digitalWrite(GPIO_NUM_2, LOW); // Mettre la broche GPIO en état haut
 
     Wire.begin(GPIO_NUM_6, GPIO_NUM_7); // initialise le bus I2C SDA 6/ SCL 7
     Serial.begin(115200); // Démarrer la communication série à 115200 bauds
@@ -158,8 +149,5 @@ void trame_CAN(double volts) {
 void loop() {
     double LectureMCP3221 = lireMCP3221(adresseCAN, activer_Affichage);   // stocke La valeur de tension en volts dans la vairable LectureMCP,
                                                                           // prend en parametre l'adresse I2C du MCP3221
-
     trame_CAN(LectureMCP3221); // Envoyer cette valeur via CAN
-    //trame_CAN_2(LectureMCP3221);
-    delay(50); // Attendre 50 ms
 }
